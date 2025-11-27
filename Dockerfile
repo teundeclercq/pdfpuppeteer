@@ -1,4 +1,3 @@
-# Use Node 20 on Debian (recommended for Puppeteer)
 FROM node:25-bullseye
 
 # Install Chromium dependencies
