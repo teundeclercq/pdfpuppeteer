@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const express = require('express');
-const pdfRouter = require('routes/pdf')
+const pdfRouter = require('./routes/pdf');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
