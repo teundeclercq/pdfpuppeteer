@@ -32,6 +32,48 @@ function authenticate(req, res, next) {
     next();
 }
 
+// 🔁 Reuse a single browser instance
+let browserPromise = null;
+async function getBrowser() {
+    if (!browserPromise) {
+        console.log('Launching Puppeteer browser...');
+        browserPromise = puppeteer
+            .launch({
+                headless: true,
+                args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            })
+            .catch((err) => {
+                console.error('Failed to launch browser, resetting handle:', err);
+                browserPromise = null;
+                throw err;
+            });
+    }
+    return browserPromise;
+}
+
+const MAX_CONCURRENT_PDFS = parseInt(process.env.MAX_CONCURRENT_PDFS || '3', 10);
+let activePdfs = 0;
+const queue = [];
+
+async function acquireSlot() {
+    if (activePdfs < MAX_CONCURRENT_PDFS) {
+        activePdfs++;
+        return;
+    }
+    return new Promise((resolve) => {
+        queue.push(resolve);
+    });
+}
+
+function releaseSlot() {
+    activePdfs--;
+    const next = queue.shift();
+    if (next) {
+        activePdfs++;
+        next();
+    }
+}
+
 // POST /  (mounted under /pdf → final route: POST /pdf)
 router.post('/', authenticate, upload.single('file'), async (req, res) => {
     let browser;
@@ -54,12 +96,10 @@ router.post('/', authenticate, upload.single('file'), async (req, res) => {
         const html = req.file.buffer.toString('utf8');
         console.log('HTML length:', html.length);
 
-        browser = await puppeteer.launch({
-            headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox'],
-        });
-
+        await acquireSlot();
+        const browser = await getBrowser();
         page = await browser.newPage();
+
         await page.setContent(html, { waitUntil: 'load' });
 
         const pdfBuffer = await page.pdf({
@@ -74,6 +114,7 @@ router.post('/', authenticate, upload.single('file'), async (req, res) => {
         });
 
         console.log('Generated PDF size (bytes):', pdfBuffer.length);
+
         res.set({
             'Content-Type': 'application/pdf',
             'Content-Disposition': 'attachment; filename="document.pdf"',
@@ -82,11 +123,15 @@ router.post('/', authenticate, upload.single('file'), async (req, res) => {
 
         res.end(pdfBuffer);
     } catch (e) {
-        console.error(e);
-        res.status(500).json({ error: 'Failed to generate PDF' });
+        console.error('PDF generation error:', e);
+        if (!res.headersSent) {
+            res.status(500).json({ error: 'Failed to generate PDF' });
+        }
     } finally {
-        if (page) await page.close().catch(() => {});
-        if (browser) await browser.close().catch(() => {});
+        if (page) {
+            await page.close().catch(() => {});
+        }
+        releaseSlot();
     }
 });
 
