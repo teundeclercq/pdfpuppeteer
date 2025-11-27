@@ -30,6 +30,7 @@ function authenticate(req, res, next) {
 // POST /  (mounted under /pdf → final route: POST /pdf)
 router.post('/', authenticate, upload.single('file'), async (req, res) => {
     let browser;
+    let page;
 
     try {
         if (!req.file) {
@@ -45,7 +46,7 @@ router.post('/', authenticate, upload.single('file'), async (req, res) => {
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
         });
 
-        const page = await browser.newPage();
+        page = await browser.newPage();
         await page.setContent(html, { waitUntil: 'load' });
 
         const pdfBuffer = await page.pdf({
@@ -65,12 +66,13 @@ router.post('/', authenticate, upload.single('file'), async (req, res) => {
             'Content-Length': pdfBuffer.length,
         });
 
-        res.send(pdfBuffer);
+        res.end(pdfBuffer);
     } catch (e) {
         console.error(e);
         res.status(500).json({ error: 'Failed to generate PDF' });
     } finally {
-        if (browser) await browser.close();
+        if (page) await page.close().catch(() => {});
+        if (browser) await browser.close().catch(() => {});
     }
 });
 

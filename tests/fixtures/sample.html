@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sample Invoice PDF</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #222;
+            padding: 24px;
+            background: #f5f5f5;
+        }
+
+        .page {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 32px 40px;
+            border-radius: 4px;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.06);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #222;
+            padding-bottom: 16px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .company-details {
+            text-align: right;
+            font-size: 12px;
+            color: #555;
+        }
+
+        .invoice-title {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            font-size: 13px;
+        }
+
+        .meta-section h3 {
+            font-size: 13px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #555;
+        }
+
+        .meta-section p {
+            margin-bottom: 2px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+
+        thead {
+            background: #f0f0f0;
+        }
+
+        th, td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-size: 11px;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .totals {
+            margin-top: 8px;
+            margin-left: auto;
+            width: 260px;
+            font-size: 13px;
+        }
+
+        .totals table {
+            margin-bottom: 0;
+        }
+
+        .totals tr:last-child td {
+            border-top: 2px solid #222;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .notes {
+            margin-top: 24px;
+            font-size: 12px;
+            color: #555;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 11px;
+            color: #888;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            padding-top: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <header class="header">
+        <div class="logo">ACME</div>
+        <div class="company-details">
+            <div>ACME Corporation</div>
+            <div>Example Street 123</div>
+            <div>1234 AB Amsterdam</div>
+            <div>support@acme.example</div>
+        </div>
+    </header>
+
+    <h1 class="invoice-title">Invoice</h1>
+
+    <section class="meta">
+        <div class="meta-section">
+            <h3>Billed To</h3>
+            <p>John Doe</p>
+            <p>Client Street 45</p>
+            <p>5678 CD Rotterdam</p>
+        </div>
+        <div class="meta-section">
+            <h3>Invoice Details</h3>
+            <p><strong>Invoice #:</strong> INV-2025-001</p>
+            <p><strong>Date:</strong> 27-11-2025</p>
+            <p><strong>Due:</strong> 10-12-2025</p>
+        </div>
+    </section>
+
+    <table>
+        <thead>
+        <tr>
+            <th style="width: 40%;">Description</th>
+            <th style="width: 15%;" class="text-right">Qty</th>
+            <th style="width: 20%;" class="text-right">Unit Price</th>
+            <th style="width: 25%;" class="text-right">Amount</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>PDF generation service</td>
+            <td class="text-right">10</td>
+            <td class="text-right">€12.50</td>
+            <td class="text-right">€125.00</td>
+        </tr>
+        <tr>
+            <td>HTML template design</td>
+            <td class="text-right">3</td>
+            <td class="text-right">€40.00</td>
+            <td class="text-right">€120.00</td>
+        </tr>
+        <tr>
+            <td>Support & maintenance</td>
+            <td class="text-right">1</td>
+            <td class="text-right">€75.00</td>
+            <td class="text-right">€75.00</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="totals">
+        <table>
+            <tr>
+                <td>Subtotal</td>
+                <td class="text-right">€320.00</td>
+            </tr>
+            <tr>
+                <td>VAT (21%)</td>
+                <td class="text-right">€67.20</td>
+            </tr>
+            <tr>
+                <td>Total</td>
+                <td class="text-right">€387.20</td>
+            </tr>
+        </table>
+    </div>
+
+    <section class="notes">
+        <p><strong>Payment terms:</strong> 14 days after invoice date.</p>
+        <p>Please include the invoice number with your payment. Thank you for your business!</p>
+    </section>
+
+    <footer class="footer">
+        Generated with the Puppeteer PDF API · This is a sample document for testing only.
+    </footer>
+</div>
+</body>
+</html>

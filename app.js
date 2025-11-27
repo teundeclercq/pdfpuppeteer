@@ -8,6 +8,11 @@ const PORT = process.env.PORT || 3000;
 
 app.use('/pdf', pdfRouter)
 
-app.listen(PORT, () => {
-    console.log(`PDF service listening on port ${PORT}`);
-});
+
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`PDF service listening on port ${PORT}`);
+    });
+}
+
+module.exports = app;

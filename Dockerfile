@@ -1,7 +1,7 @@
 FROM ghcr.io/puppeteer/puppeteer:24.31.0
 
-# Create non-root user for better security
-RUN useradd -m -s /bin/bash nodeuser
+# Switch to root to install node modules in /app
+USER root
 
 WORKDIR /app
 
@@ -12,13 +12,11 @@ RUN npm install --production
 # Copy app source
 COPY . .
 
-# Use non-root user
-USER nodeuser
+# Switch back to the unprivileged user provided by the base image
+USER pptruser
 
-# Use environment variable for production
 ENV NODE_ENV=production
 
 EXPOSE 3000
 
-# Start the service
 CMD ["node", "app.js"]
