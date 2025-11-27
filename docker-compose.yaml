@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  pdf-service:
+    image: teundeclercq/pdfpuppeteer:v1.0.2
+    container_name: pdf-service
+    environment:
+      - SHARED_SECRET=mysecret
+    ports:
+      - "3000:3000"
+    # Local resource hints/limits
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"   # hard-ish cap: 1 vCPU
+          memory: 1G    # hard-ish cap: 1 GiB
+        reservations:
+          cpus: "0.5"   # scheduler hint
+          memory: 512M
+
+  k6:
+    image: grafana/k6
+    container_name: pdf-loadtest
+    depends_on:
+      - pdf-service
+    environment:
+      - K6_NO_USAGE_REPORT=true
+      - SHARED_SECRET=mysecret
+    volumes:
+      - ./k6:/scripts
+      - ./tests/fixtures:/data
+    command: ["run", "/scripts/loadtest.js"]
