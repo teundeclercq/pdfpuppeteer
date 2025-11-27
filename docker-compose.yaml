@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   pdf-service:
-    image: teundeclercq/pdfpuppeteer:v1.0.4
+    image: teundeclercq/pdfpuppeteer:v1.0.5
     container_name: pdf-service
     environment:
       - SHARED_SECRET=mysecret
