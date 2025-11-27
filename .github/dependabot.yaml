@@ -1,0 +1,54 @@
+version: 2
+
+updates:
+  # ───────────────────────────────────────────
+  # 1. npm (package.json)
+  # ───────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "npm"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    # Optional: auto-assign PRs
+    assignees:
+      - "<YOUR_GITHUB_USERNAME>"
+
+  # ───────────────────────────────────────────
+  # 2. Dockerfile updates
+  # ───────────────────────────────────────────
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+    assignees:
+      - "<YOUR_GITHUB_USERNAME>"
+
+  # ───────────────────────────────────────────
+  # 3. GitHub Actions updates
+  # ───────────────────────────────────────────
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "gha"
+      include: "scope"
+    assignees:
+      - "<YOUR_GITHUB_USERNAME>"
