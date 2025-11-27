@@ -1,0 +1,38 @@
+name: CI/CD - Build & Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  build-and-push:
+    name: Build & Push Docker image
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    env:
+      REGISTRY: docker.io
+      IMAGE_NAME: ${{ github.repository }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
