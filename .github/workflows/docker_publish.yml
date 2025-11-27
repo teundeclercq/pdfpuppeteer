@@ -30,4 +30,4 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/pdfpuppeteer:${{ steps.tag.outputs.TAG }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/pfdpuppeteer:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/pdfpuppeteer:latest
