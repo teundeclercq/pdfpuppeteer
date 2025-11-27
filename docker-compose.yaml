@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   pdf-service:
-    image: teundeclercq/pdfpuppeteer:v1.0.2
+    image: teundeclercq/pdfpuppeteer:latest
     container_name: pdf-service
     environment:
       - SHARED_SECRET=mysecret
@@ -28,5 +28,5 @@ services:
       - SHARED_SECRET=mysecret
     volumes:
       - ./k6:/scripts
-      - ./tests/fixtures:/data
+      - ./tests/fixtures/:/data
     command: ["run", "/scripts/loadtest.js"]

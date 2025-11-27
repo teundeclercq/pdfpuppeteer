@@ -8,6 +8,7 @@ const router = express.Router();
 const SHARED_SECRET = process.env.SHARED_SECRET;
 
 if (!SHARED_SECRET) {
+    console.error('SHARED_SECRET is not set!');
     // you can throw or just log; throwing will crash on startup:
     throw new Error('SHARED_SECRET is required');
 }
@@ -22,6 +23,10 @@ const upload = multer({
 function authenticate(req, res, next) {
     const provided = req.headers['x-shared-secret'];
     if (!provided || provided !== SHARED_SECRET) {
+        console.warn(
+            'Unauthorized request',
+            { provided, expected: SHARED_SECRET ? '(set)' : '(missing)' }
+        );
         return res.status(401).json({ error: 'Unauthorized' });
     }
     next();
@@ -33,13 +38,21 @@ router.post('/', authenticate, upload.single('file'), async (req, res) => {
     let page;
 
     try {
+        console.log(
+            'Incoming /pdf request',
+            'hasFile=', !!req.file,
+            'fileSize=', req.file?.buffer?.length || 0
+        );
+
         if (!req.file) {
+            console.warn('No file received on /pdf');
             return res
                 .status(400)
                 .json({ error: 'No HTML file uploaded. Use field name "file".' });
         }
 
         const html = req.file.buffer.toString('utf8');
+        console.log('HTML length:', html.length);
 
         browser = await puppeteer.launch({
             headless: true,
@@ -60,6 +73,7 @@ router.post('/', authenticate, upload.single('file'), async (req, res) => {
             },
         });
 
+        console.log('Generated PDF size (bytes):', pdfBuffer.length);
         res.set({
             'Content-Type': 'application/pdf',
             'Content-Disposition': 'attachment; filename="document.pdf"',
