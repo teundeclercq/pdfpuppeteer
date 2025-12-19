@@ -1,4 +1,4 @@
-FROM ghcr.io/puppeteer/puppeteer:24.33.0
+FROM ghcr.io/puppeteer/puppeteer:24.33.1
 
 # Switch to root to install node modules in /app
 USER root
